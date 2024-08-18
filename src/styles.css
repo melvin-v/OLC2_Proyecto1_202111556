@@ -1,0 +1,49 @@
+/* Estilos para centrar todo el contenido */
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333; /* Color de fondo opcional */
+}
+
+#editor-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 800px;
+}
+
+#container {
+    width: 100%;
+    height: 600px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra opcional para destacar el editor */
+}
+
+#run-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#run-button:hover {
+    background-color: #45a049;
+}
+
+#output {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra opcional para destacar el panel de salida */
+    min-height: 100px;
+}
