@@ -2,6 +2,8 @@ module.exports = {
     format: 'es',
     input: 'parser/parser.pegjs',
     dependencies: {
-        'OperacionBinaria': 'expressions/OperacionBinaria.js',
+        'Declaration': '../expressions/Declaration.js',
+        'Print': '../instruction/print.js',
+        'ExpressionStatement': '../expressions/ExpressionStatement.js',
     }
 };

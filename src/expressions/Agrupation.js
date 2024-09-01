@@ -1,4 +1,4 @@
-import Statement from '../abstract/Statement';
+import Statement from '../abstract/Expression';
 
 export class Agrupation extends Statement {
 

@@ -2,7 +2,7 @@ import Statement from '../abstract/Statement';
 
 export class Declaration extends Statement {
 
-    constructor({ id, exp }) {
+    constructor(id, exp) {
         super();
         this.id = id;
         this.exp = exp;

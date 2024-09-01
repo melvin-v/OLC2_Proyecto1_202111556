@@ -1,4 +1,4 @@
-export class Statement  {
+export class Expression  {
 
     constructor() {
         this.location = null;
