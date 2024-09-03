@@ -1,8 +1,8 @@
-import Statement from '../abstract/Statement';
+import Expression from '../abstract/Expression.js';
 
-export class ReferenceVariable extends Statement {
+export default class ReferenceVariable extends Expression {
     
-        constructor({ id }) {
+        constructor( id ) {
             super();
             this.id = id;
         }
@@ -12,5 +12,3 @@ export class ReferenceVariable extends Statement {
         }
     
     }
-
-export default ReferenceVariable;

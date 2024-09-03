@@ -1,7 +1,7 @@
-import Statement from '../abstract/Statement';
+import Expression from '../abstract/Expression.js';
 
-export class BinaryOperation extends Statement {
-    constructor({ izq, der, op }) {
+export default class BinaryOperation extends Expression {
+    constructor(izq, der, op) {
         super(); 
         this.izq = izq;
         this.der = der;
@@ -11,5 +11,3 @@ export class BinaryOperation extends Statement {
         return visitor.visitBinaryOperation(this);
     }
 }
-
-export default BinaryOperation;

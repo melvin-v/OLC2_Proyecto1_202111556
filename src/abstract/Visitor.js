@@ -1,4 +1,4 @@
-export class visitor{
+export default class visitor{
     visitExpresion(node) {
         throw new Error('Metodo visitExpresion no implementado');
     }

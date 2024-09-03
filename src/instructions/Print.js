@@ -1,8 +1,8 @@
-import Statement from '../abstract/Statement';
+import Expression from '../abstract/Expression.js';
 
-export class Print extends Statement {
+export  default class Print extends Expression {
         
-            constructor({ exp }) {
+            constructor(exp) {
                 super();
                 this.exp = exp;
             }
@@ -12,5 +12,3 @@ export class Print extends Statement {
             }
         
         }
-
-export default Print;

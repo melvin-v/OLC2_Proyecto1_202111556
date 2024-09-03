@@ -1,8 +1,8 @@
-import Statement from '../abstract/Statement';
+import Expression from '../abstract/Expression.js';
 
-export class If extends Statement {
+export default class If extends Expression {
     
-        constructor({ condition, thenBlock, elseBlock }) {
+        constructor( condition, thenBlock, elseBlock ) {
             super();
             this.condition = condition;
             this.thenBlock = thenBlock;
@@ -14,5 +14,3 @@ export class If extends Statement {
         }
     
     }
-
-export default If;

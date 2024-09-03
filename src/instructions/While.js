@@ -1,8 +1,8 @@
-import Statement from '../abstract/Statement';
+import Expression from '../abstract/Expression.js';
 
-export class While extends Statement {
+export default class While extends Expression {
         
-            constructor({ condition, block }) {
+            constructor( condition, block ) {
                 super();
                 this.condition = condition;
                 this.block = block;
@@ -13,5 +13,3 @@ export class While extends Statement {
             }
         
         }
-
-export default While;

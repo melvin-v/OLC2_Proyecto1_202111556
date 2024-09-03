@@ -1,8 +1,8 @@
-import Statement from '../abstract/Statement';
+import Expression from '../abstract/Expression.js';
 
-export class Number extends Statement {
+export default class Number extends Expression {
     
-        constructor({ value }) {
+        constructor(value) {
             super();
             this.value = value;
         }
@@ -12,5 +12,3 @@ export class Number extends Statement {
         }
     
     }
-
-export default Number;

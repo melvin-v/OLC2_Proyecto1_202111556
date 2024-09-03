@@ -1,8 +1,8 @@
-import Statement from '../abstract/Statement';
+import Expression from '../abstract/Expression.js';
 
-export class Bloque extends Statement {
+export default class Bloque extends Expression {
 
-    constructor({ statements }) {
+    constructor( statements ) {
         super();
         this.statements = statements;
     }
@@ -12,5 +12,3 @@ export class Bloque extends Statement {
     }
 
 }
-
-export default Bloque;

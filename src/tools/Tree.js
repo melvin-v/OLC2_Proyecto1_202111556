@@ -1,4 +1,4 @@
-class Tree{
+export default class Tree{
     constructor(){
         this.instructions = [];
         this.console = "";

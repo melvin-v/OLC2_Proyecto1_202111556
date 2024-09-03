@@ -1,15 +1,15 @@
 import Expression from '../abstract/Expression.js';
 
-export default class Declaration extends Expression {
+export default class Assignment extends Expression {
 
-    constructor(id, exp) {
+    constructor( id, exp ) {
         super();
         this.id = id;
         this.exp = exp;
     }
 
     accept(visitor) {
-        return visitor.visitDeclaration(this);
+        return visitor.visitAssignment(this);
     }
 
 }

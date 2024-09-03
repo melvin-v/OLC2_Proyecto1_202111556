@@ -1,8 +1,8 @@
-import Statement from '../abstract/Statement';
+import Expression from '../abstract/Expression.js';
 
-export class UnaryOperation extends Statement {
+export default class UnaryOperation extends Expression {
 
-    constructor({ exp, op }) {
+    constructor( exp, op ) {
         super();
         this.exp = exp;
         this.op = op;
@@ -13,5 +13,3 @@ export class UnaryOperation extends Statement {
     }
 
 }
-
-export default UnaryOperation;

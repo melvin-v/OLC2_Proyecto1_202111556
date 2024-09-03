@@ -1,8 +1,8 @@
-import Expression from '../abstract/Expression';
+import Expression from '../abstract/Expression.js';
 
-export class ExpresionStmt extends Expression {
+export default class ExpresionStatment extends Expression {
 
-    constructor({ exp }) {
+    constructor( exp ) {
         super();
         this.exp = exp;
 
