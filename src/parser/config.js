@@ -11,5 +11,11 @@ module.exports = {
         'Number': '../expressions/Number.js',
         'Agrupation': '../expressions/Agrupation.js',
         'ReferenceVariable': '../expressions/ReferenceVariable.js',
+        'If': '../instructions/If.js',
+        'Block': '../instructions/Block.js',
+        'While': '../instructions/While.js',
+        'Bool': '../expressions/Bool.js',
+        'String': '../expressions/String.js',
+        'Types': '../tools/Types.js',
     }
 };

@@ -1,6 +1,6 @@
 import Expression from '../abstract/Expression.js';
 
-export default class Bloque extends Expression {
+export default class Block extends Expression {
 
     constructor( statements ) {
         super();
@@ -8,7 +8,7 @@ export default class Bloque extends Expression {
     }
 
     accept(visitor) {
-        return visitor.visitBloque(this);
+        return visitor.visitBlock(this);
     }
 
 }
