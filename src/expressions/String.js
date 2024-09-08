@@ -1,9 +1,10 @@
 import Expression from '../abstract/Expression.js';
 
 export default class String extends Expression {
-    constructor(value) {
+    constructor(value, location) {
         super();
         this.value = value;
+        this.location = location;
     }
 
     accept(visitor) {

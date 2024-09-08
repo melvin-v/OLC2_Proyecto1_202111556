@@ -15,10 +15,8 @@ require(['vs/editor/editor.main'], () => {
             const sentencias = parse(code);
             console.log(sentencias);
             const interprete = new Interpreter();
-            console.log(interprete);
             sentencias.forEach(sentencia => sentencia.accept(interprete));
-            console.log(interprete);
-            
+            console.log(interprete.environment.tabla);
             document.getElementById('output').innerText = interprete.console;
         
     });

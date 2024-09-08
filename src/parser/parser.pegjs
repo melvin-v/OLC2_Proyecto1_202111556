@@ -3,27 +3,27 @@ programa = _ dcl:Declaracion* _ { return dcl }
 Declaracion = dcl:VarDcl _ { return dcl }
             / stmt:Stmt _ { return stmt }
 
-VarDcl = "var" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return new Declaration(id, exp) }
-       /  "int" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.INT) }
-        /  "float" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.FLOAT) }
-        /  "char" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.CHAR) }
-        /  "bool" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.BOOL) }
-        /  "string" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.STRING) }
+VarDcl = "var" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, location()) }
+       /  "int" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.INT, location()) }
+        /  "float" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.FLOAT, location()) }
+        /  "char" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.CHAR, location()) }
+        /  "bool" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.BOOL, location()) }
+        /  "string" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.STRING, location()) }
 
-Stmt = "System.out.println" _ "(" _ exp:Expresion _ ")" _ ";" { return new Print(exp) }
-    / exp:Expresion _ ";" { return new ExpresionStatement(exp) }
-    / "{" _ dcls:Declaracion* _ "}" { return new Block(dcls) }
+Stmt = "System.out.println" _ "(" _ exp:Expresion _ ")" _ ";" { return new Print(exp, location()) }
+    / exp:Expresion _ ";" { return new ExpressionStatement(exp, location()) }
+    / "{" _ dcls:Declaracion* _ "}" { return new Block(dcls, location()) }
     / "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Stmt 
       stmtFalse:(
         _ "else" _ stmtFalse:Stmt { return stmtFalse } 
       )? { return new If(cond, stmtTrue, stmtFalse) }
-    / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return new While(cond, stmt) }
+    / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return new While(cond, stmt, location()) }
 
 Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 
 Expresion = Asignacion
 
-Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return new Assignment(id, asgn) }
+Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return new Assignment(id, asgn, location()) }
           / Comparacion
 
 Comparacion = izq:Suma expansion:(
@@ -32,7 +32,7 @@ Comparacion = izq:Suma expansion:(
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual
-      return new BinaryOperation(izq, der, tipo)
+      return new BinaryOperation(izq, der, tipo, location())
     },
     izq
   )
@@ -44,7 +44,7 @@ Suma = izq:Multiplicacion expansion:(
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual
-      return new BinaryOperation(izq, der, tipo)
+      return new BinaryOperation(izq, der, tipo, location())
     },
     izq
   )
@@ -56,22 +56,22 @@ Multiplicacion = izq:Unaria expansion:(
     return expansion.reduce(
       (operacionAnterior, operacionActual) => {
         const { tipo, der } = operacionActual
-        return new BinaryOperation(izq, der, tipo)
+        return new BinaryOperation(izq, der, tipo, location())
       },
       izq
     )
 }
 
-Unaria = "-" _ num:Numero { return new UnaryOperation(num, "-") }
+Unaria = "-" _ num:Numero { return new UnaryOperation(num, "-", location()) }
 / Numero
 
 // { return{ tipo: "numero", valor: parseFloat(text(), 10) } }
-Numero = [0-9]+( "." [0-9]+ )? {return new Number(parseFloat(text(), 10))}
-  / "(" _ exp:Expresion _ ")" { return new Agrupation(exp) }
-  / "true" { return new Boolean(true) }
-  / "false" { return new Boolean(false) }
-  / "\""  txt:StringTxt "\"" { return new String(txt) }
-  / id:Identificador { return new ReferenceVariable(id) }
+Numero = [0-9]+( "." [0-9]+ )? {return new Number(parseFloat(text(), 10), location())}
+  / "(" _ exp:Expresion _ ")" { return new Agrupation(exp, location()) }
+  / "true" { return new Boolean(true, location()) }
+  / "false" { return new Boolean(false, location()) }
+  / "\""  txt:StringTxt "\"" { return new String(txt, location()) }
+  / id:Identificador { return new ReferenceVariable(id, location()) }
 
 StringTxt = [^"]* { return text() }
 

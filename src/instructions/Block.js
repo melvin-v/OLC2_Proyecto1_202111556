@@ -2,9 +2,10 @@ import Expression from '../abstract/Expression.js';
 
 export default class Block extends Expression {
 
-    constructor( statements ) {
+    constructor( statements, location ) {
         super();
         this.statements = statements;
+        this.location = location;
     }
 
     accept(visitor) {

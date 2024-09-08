@@ -2,13 +2,14 @@ import Expression from '../abstract/Expression.js';
 
 export default class ExpresionStatment extends Expression {
 
-    constructor( exp ) {
+    constructor( exp, location ) {
         super();
         this.exp = exp;
+        this.location = location;
 
     }
 
     accept(visitor) {
-        return visitor.visitExpresionStmt(this);
+        return visitor.visitExpresionStatment(this);
     }
 }

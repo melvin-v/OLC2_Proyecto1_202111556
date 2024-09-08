@@ -106,7 +106,7 @@ export default class Interpreter extends Visitor {
                 return;
         }
 
-        this.environment.saveVariable(nombreVariable, valorVariable, this);
+        this.environment.saveVariable(nombreVariable, tipo, valorVariable, this);
     }
 }
     visitBool(node) {
@@ -131,12 +131,12 @@ export default class Interpreter extends Visitor {
     }
 
 
-    visitExperssionStatement(node) {
+    visitExpresionStatment(node) {
         node.exp.accept(this);
     }
 
     visitAssignment(node) {
-        const valor = node.asgn.accept(this);
+        const valor = node.exp.accept(this);
         this.environment.updateVariable(node.id, valor, this);
 
         return valor;

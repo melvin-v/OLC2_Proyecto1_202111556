@@ -264,26 +264,26 @@ function peg$parse(input, options) {
   var peg$f0 = function(dcl) { return dcl };
   var peg$f1 = function(dcl) { return dcl };
   var peg$f2 = function(stmt) { return stmt };
-  var peg$f3 = function(id, exp) { return new Declaration(id, exp) };
-  var peg$f4 = function(id, exp) { return new Declaration(id, exp, Types.INT) };
-  var peg$f5 = function(id, exp) { return new Declaration(id, exp, Types.FLOAT) };
-  var peg$f6 = function(id, exp) { return new Declaration(id, exp, Types.CHAR) };
-  var peg$f7 = function(id, exp) { return new Declaration(id, exp, Types.BOOL) };
-  var peg$f8 = function(id, exp) { return new Declaration(id, exp, Types.STRING) };
-  var peg$f9 = function(exp) { return new Print(exp) };
-  var peg$f10 = function(exp) { return new ExpresionStatement(exp) };
-  var peg$f11 = function(dcls) { return new Block(dcls) };
+  var peg$f3 = function(id, exp) { return new Declaration(id, exp, location()) };
+  var peg$f4 = function(id, exp) { return new Declaration(id, exp, Types.INT, location()) };
+  var peg$f5 = function(id, exp) { return new Declaration(id, exp, Types.FLOAT, location()) };
+  var peg$f6 = function(id, exp) { return new Declaration(id, exp, Types.CHAR, location()) };
+  var peg$f7 = function(id, exp) { return new Declaration(id, exp, Types.BOOL, location()) };
+  var peg$f8 = function(id, exp) { return new Declaration(id, exp, Types.STRING, location()) };
+  var peg$f9 = function(exp) { return new Print(exp, location()) };
+  var peg$f10 = function(exp) { return new ExpressionStatement(exp, location()) };
+  var peg$f11 = function(dcls) { return new Block(dcls, location()) };
   var peg$f12 = function(cond, stmtTrue, stmtFalse) { return stmtFalse };
   var peg$f13 = function(cond, stmtTrue, stmtFalse) { return new If(cond, stmtTrue, stmtFalse) };
-  var peg$f14 = function(cond, stmt) { return new While(cond, stmt) };
+  var peg$f14 = function(cond, stmt) { return new While(cond, stmt, location()) };
   var peg$f15 = function() { return text() };
-  var peg$f16 = function(id, asgn) { return new Assignment(id, asgn) };
+  var peg$f16 = function(id, asgn) { return new Assignment(id, asgn, location()) };
   var peg$f17 = function(izq, op, der) { return { tipo: op, der } };
   var peg$f18 = function(izq, expansion) { 
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual
-      return new BinaryOperation(izq, der, tipo)
+      return new BinaryOperation(izq, der, tipo, location())
     },
     izq
   )
@@ -293,7 +293,7 @@ function peg$parse(input, options) {
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
       const { tipo, der } = operacionActual
-      return new BinaryOperation(izq, der, tipo)
+      return new BinaryOperation(izq, der, tipo, location())
     },
     izq
   )
@@ -303,18 +303,18 @@ function peg$parse(input, options) {
     return expansion.reduce(
       (operacionAnterior, operacionActual) => {
         const { tipo, der } = operacionActual
-        return new BinaryOperation(izq, der, tipo)
+        return new BinaryOperation(izq, der, tipo, location())
       },
       izq
     )
 };
-  var peg$f23 = function(num) { return new UnaryOperation(num, "-") };
-  var peg$f24 = function() {return new Number(parseFloat(text(), 10))};
-  var peg$f25 = function(exp) { return new Agrupation(exp) };
-  var peg$f26 = function() { return new Boolean(true) };
-  var peg$f27 = function() { return new Boolean(false) };
-  var peg$f28 = function(txt) { return new String(txt) };
-  var peg$f29 = function(id) { return new ReferenceVariable(id) };
+  var peg$f23 = function(num) { return new UnaryOperation(num, "-", location()) };
+  var peg$f24 = function() {return new Number(parseFloat(text(), 10), location())};
+  var peg$f25 = function(exp) { return new Agrupation(exp, location()) };
+  var peg$f26 = function() { return new Boolean(true, location()) };
+  var peg$f27 = function() { return new Boolean(false, location()) };
+  var peg$f28 = function(txt) { return new String(txt, location()) };
+  var peg$f29 = function(id) { return new ReferenceVariable(id, location()) };
   var peg$f30 = function() { return text() };
   var peg$currPos = options.peg$currPos | 0;
   var peg$savedPos = peg$currPos;

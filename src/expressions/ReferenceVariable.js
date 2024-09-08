@@ -2,9 +2,10 @@ import Expression from '../abstract/Expression.js';
 
 export default class ReferenceVariable extends Expression {
     
-        constructor( id ) {
+        constructor( id, location ) {
             super();
             this.id = id;
+            this.location = location
         }
     
         accept(visitor) {

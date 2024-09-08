@@ -1,9 +1,9 @@
 export default class Types {
-    INT = "INT";
-    FLOAT = "FLOAT";
-    STRING = "STRING";
-    CHAR = "CHAR";
-    BOOL = "BOOL";
-    ARRAY = "ARRAY";
-    STRUCT = "STRUCT";
+    static INT = "INT";
+    static FLOAT = "FLOAT";
+    static STRING = "STRING";
+    static CHAR = "CHAR";
+    static BOOL = "BOOL";
+    static ARRAY = "ARRAY";
+    static STRUCT = "STRUCT";
 }
