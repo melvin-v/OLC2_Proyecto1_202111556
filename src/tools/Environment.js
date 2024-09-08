@@ -28,6 +28,18 @@ export default class Environment{
         return undefined;
     }
 
+    getAllVariable(id, tree){
+        let env = this;
+        while(env != undefined){
+            if(env.tabla.has(id)){
+                return env.tabla.get(id);
+            }
+            env = env.previus;
+        }
+        tree.addError("Variable " + id + " no existe en el ambiente " + this.id);
+        return undefined;
+    }
+
     updateVariable(id, value, tree){
         let env = this;
         while(env != undefined){

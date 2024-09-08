@@ -136,8 +136,27 @@ export default class Interpreter extends Visitor {
     }
 
     visitAssignment(node) {
+        //Tengo que asignar el valor de la variable siempre y cuando el tipo de dato sea el correcto caso contrario lanzar un error
+        const variable = this.environment.getAllVariable(node.id, this);
         const valor = node.exp.accept(this);
-        this.environment.updateVariable(node.id, valor, this);
+        if(variable.type === Types.INT && typeof valor === "number" && Number.isInteger(valor)){
+            this.environment.updateVariable(node.id, valor, this);
+        }
+        else if(variable.type === Types.FLOAT && typeof valor === "number" && !Number.isInteger(valor)){
+            this.environment.updateVariable(node.id, valor, this);
+        }
+        else if(variable.type === Types.STRING && typeof valor === "string"){
+            this.environment.updateVariable(node.id, valor, this);
+        }
+        else if(variable.type === Types.CHAR && typeof valor === "string" && valor.length === 1){
+            this.environment.updateVariable(node.id, valor, this);
+        }
+        else if(variable.type === Types.BOOL && typeof valor === "boolean"){
+            this.environment.updateVariable(node.id, valor, this);
+        }
+        else{
+            this.addError("Error de tipo, se esperaba un " + variable.type);
+        }
 
         return valor;
     }
