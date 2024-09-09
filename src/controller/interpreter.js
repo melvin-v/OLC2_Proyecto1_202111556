@@ -25,7 +25,10 @@ export default class Interpreter extends Visitor {
     visitBinaryOperation(node) {
         const izq = node.izq.accept(this);
         const der = node.der.accept(this);
-
+        if (izq === null || der === null) {
+            this.addError("Null no puede ser operado", node.location.start.line, node.location.start.column);
+            return null;
+        }
         switch (node.op) {
             case '+':
                 return izq + der;
@@ -34,7 +37,13 @@ export default class Interpreter extends Visitor {
             case '*':
                 return izq * der;
             case '/':
+                if (der === 0) {
+                    this.addError("Error de division por cero", node.location.start.line, node.location.start.column);
+                    return;
+                }
                 return izq / der;
+            case '%':
+                return izq % der;
             case '<=':
                 return izq <= der;
             case '==':
@@ -66,6 +75,10 @@ export default class Interpreter extends Visitor {
     visitDeclaration(node) {
         const nombreVariable = node.id;
         const tipo = node.tipo;
+        if(node.exp === null){
+            this.environment.saveVariable(nombreVariable, tipo, null, this);
+            return null;
+        }
         const valorVariable = node.exp.accept(this);
         if(tipo === undefined){
             if (typeof valorVariable === "number" && Number.isInteger(valorVariable)) {

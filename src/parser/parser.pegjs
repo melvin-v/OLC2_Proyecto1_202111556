@@ -9,6 +9,11 @@ VarDcl = "var" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return new Decla
         /  "char" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.CHAR, location()) }
         /  "bool" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.BOOL, location()) }
         /  "string" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.STRING, location()) }
+        /  "int" _ id:Identificador _ ";" { return new Declaration(id, null, Types.INT, location()) }
+        /  "float" _ id:Identificador _ ";" { return new Declaration(id, null, Types.FLOAT, location()) }
+        /  "char" _ id:Identificador _ ";" { return new Declaration(id, null, Types.CHAR, location()) }
+        /  "bool" _ id:Identificador _ ";" { return new Declaration(id, null, Types.BOOL, location()) }
+        /  "string" _ id:Identificador _";" { return new Declaration(id, null, Types.STRING, location()) }
 
 Stmt = "System.out.println" _ "(" _ exp:Expresion _ ")" _ ";" { return new Print(exp, location()) }
     / exp:Expresion _ ";" { return new ExpressionStatement(exp, location()) }
@@ -50,8 +55,20 @@ Suma = izq:Multiplicacion expansion:(
   )
 }
 
-Multiplicacion = izq:Unaria expansion:(
-  _ op:("*" / "/") _ der:Unaria { return { tipo: op, der } }
+Multiplicacion = izq:Modulo expansion:(
+  _ op:("*" / "/") _ der:Modulo { return { tipo: op, der } }
+)* {
+    return expansion.reduce(
+      (operacionAnterior, operacionActual) => {
+        const { tipo, der } = operacionActual
+        return new BinaryOperation(izq, der, tipo, location())
+      },
+      izq
+    )
+}
+
+Modulo = izq:Unaria expansion:(
+  _ op:("%") _ der:Unaria { return { tipo: op, der } }
 )* {
     return expansion.reduce(
       (operacionAnterior, operacionActual) => {
