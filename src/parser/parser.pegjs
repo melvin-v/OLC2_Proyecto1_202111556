@@ -31,10 +31,46 @@ Expresion = Asignacion
 Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return new Assignment(id, asgn, location()) }
           / id:Identificador _ "+" _ "=" _ asgn:Asignacion { return new Assignment(id, new BinaryOperation(new ReferenceVariable(id, location()), asgn, "+", location()), location()) } 
           / id:Identificador _ "-" _ "=" _ asgn:Asignacion { return new Assignment(id, new BinaryOperation(new ReferenceVariable(id, location()), asgn, "-", location()), location()) }
-          / Comparacion
+          / AndOr
 
-Comparacion = izq:Suma expansion:(
-  _ op:("<=") _ der:Suma { return { tipo: op, der } }
+AndOr = izq:Comparacion expansion:(
+  _ op:("&&" / "||") _ der:Comparacion { return { tipo: op, der } }
+)* { 
+  return expansion.reduce(
+    (operacionAnterior, operacionActual) => {
+      const { tipo, der } = operacionActual
+      return new BinaryOperation(izq, der, tipo, location())
+    },
+    izq
+  )
+}
+
+Comparacion = izq:MayorMenor expansion:(
+  _ op:("<=" / ">=") _ der:MayorMenor { return { tipo: op, der } }
+)* { 
+  return expansion.reduce(
+    (operacionAnterior, operacionActual) => {
+      const { tipo, der } = operacionActual
+      return new BinaryOperation(izq, der, tipo, location())
+    },
+    izq
+  )
+}
+
+MayorMenor = izq:IgualQue expansion:(
+  _ op:("<" / ">") _ der:IgualQue { return { tipo: op, der } }
+)* { 
+  return expansion.reduce(
+    (operacionAnterior, operacionActual) => {
+      const { tipo, der } = operacionActual
+      return new BinaryOperation(izq, der, tipo, location())
+    },
+    izq
+  )
+}
+
+IgualQue = izq:Suma expansion:(
+  _ op:("==" / "!=") _ der:Suma { return { tipo: op, der } }
 )* { 
   return expansion.reduce(
     (operacionAnterior, operacionActual) => {
@@ -82,6 +118,7 @@ Modulo = izq:Unaria expansion:(
 }
 
 Unaria = "-" _ num:Numero { return new UnaryOperation(num, "-", location()) }
+  / "!" _ num:Numero { return new UnaryOperation(num, "!", location()) }
 / Numero
 
 // { return{ tipo: "numero", valor: parseFloat(text(), 10) } }

@@ -48,6 +48,18 @@ export default class Interpreter extends Visitor {
                 return izq <= der;
             case '==':
                 return izq === der;
+            case '!=':
+                return izq !== der;
+            case '>=':
+                return izq >= der;
+            case '<':
+                return izq < der;
+            case '>':
+                return izq > der;
+            case '&&':
+                return izq && der;
+            case '||':
+                return izq || der;
             default:
                 throw new Error(`Operador no soportado: ${node.op}`);
         }
@@ -59,6 +71,8 @@ export default class Interpreter extends Visitor {
         switch (node.op) {
             case '-':
                 return -exp;
+            case '!':
+                return !exp;
             default:
                 throw new Error(`Operador no soportado: ${node.op}`);
         }
