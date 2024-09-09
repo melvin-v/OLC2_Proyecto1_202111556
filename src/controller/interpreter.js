@@ -14,8 +14,8 @@ export default class Interpreter extends Visitor {
         this.console += text + "\n";
     }
 
-    addError(error){
-        this.errors.push(error);
+    addError(error, line, column){
+        this.errors.push({error, line, column});
     }
 
     interpretar(nodo) {
@@ -86,23 +86,23 @@ export default class Interpreter extends Visitor {
         }
         else{
             if(typeof valorVariable === "number" && Number.isInteger(valorVariable && !(tipo === Types.INT))){
-                this.addError("Error de tipo, se esperaba un entero");
+                this.addError("Error de tipo, se esperaba un entero", node.location.start.line, node.location.start.column);
                 return;
             }
             else if(typeof valorVariable === "number" && !(Number.isInteger(valorVariable) && !(tipo === Types.FLOAT))){
-                this.addError("Error de tipo, se esperaba un flotante");
+                this.addError("Error de tipo, se esperaba un flotante", node.location.start.line, node.location.start.column);
                 return;
             }
             else if(typeof valorVariable === "string" && !(tipo === Types.STRING)){
-                this.addError("Error de tipo, se esperaba un string");
+                this.addError("Error de tipo, se esperaba un string", node.location.start.line, node.location.start.column);
                 return;
             }
             else if(typeof valorVariable === "string" && valorVariable.length === 1 && !(tipo === Types.CHAR)){
-                this.addError("Error de tipo, se esperaba un char");
+                this.addError("Error de tipo, se esperaba un char", node.location.start.line, node.location.start.column);
                 return;
             }
             else if(typeof valorVariable === "bool" && !(tipo === Types.BOOL)){
-                this.addError("Error de tipo, se esperaba un bool");
+                this.addError("Error de tipo, se esperaba un bool", node.location.start.line, node.location.start.column);
                 return;
         }
 
@@ -110,7 +110,7 @@ export default class Interpreter extends Visitor {
     }
 }
     visitBool(node) {
-        if (node.value === "true") {
+        if (node.value == true) {
             return true;
         }
         return false;
@@ -155,7 +155,7 @@ export default class Interpreter extends Visitor {
             this.environment.updateVariable(node.id, valor, this);
         }
         else{
-            this.addError("Error de tipo, se esperaba un " + variable.type);
+            this.addError("Error de tipo, se esperaba un " + variable.type, node.location.start.line, node.location.start.column);
         }
 
         return valor;
@@ -163,16 +163,13 @@ export default class Interpreter extends Visitor {
 
     visitBlock(node) {
         const entornoAnterior = this.environment;
-        this.environment = new Environment(entornoAnterior);
-
+        this.entornoActual = new Environment(entornoAnterior);
         node.statements.forEach(statement => statement.accept(this));
-
         this.environment = entornoAnterior;
     }
 
     visitIf(node) {
         const cond = node.cond.accept(this);
-        console.log(cond)
         if (cond) {
             node.stmtTrue.accept(this);
             return;

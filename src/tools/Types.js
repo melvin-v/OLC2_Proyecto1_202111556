@@ -6,4 +6,5 @@ export default class Types {
     static BOOL = "BOOL";
     static ARRAY = "ARRAY";
     static STRUCT = "STRUCT";
+    static NULL = "NULL";
 }

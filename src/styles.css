@@ -1,14 +1,48 @@
-/* Estilos para centrar todo el contenido */
+/* Reset de estilos básicos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body, html {
     height: 100%;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #333; /* Color de fondo opcional */
+    background-color: #333; /* Fondo oscuro para la interfaz */
+    font-family: Arial, sans-serif;
 }
 
-#editor-container {
+#main-container {
+    display: flex;
+    align-items: flex-start; /* Alinea el contenido al inicio */
+    gap: 20px; /* Espacio entre botones y editor */
+}
+
+#button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espacio entre los botones */
+}
+
+#button-container button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#button-container button:hover {
+    background-color: #45a049;
+}
+
+#editor-output-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,18 +53,19 @@ body, html {
     width: 100%;
     height: 600px;
     border: 1px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra opcional para destacar el editor */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra para destacar el editor */
 }
 
 #run-button {
     margin-top: 10px;
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: #1f8822;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
 #run-button:hover {
@@ -44,6 +79,6 @@ body, html {
     background-color: #222;
     color: #fff;
     border: 1px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra opcional para destacar el panel de salida */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     min-height: 100px;
 }

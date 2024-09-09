@@ -8,7 +8,7 @@ export default class Environment{
         let env = this;
         while(env != undefined){
             if(env.tabla.has(id)){
-                tree.addError("Variable " + id + " ya existe en el ambiente " + this.id);
+                tree.addError("Variable " + id + " ya existe en el ambiente " + this.id, node.location.start.line, node.location.start.column);
                 return;
             }
             env = env.previus;
@@ -24,7 +24,7 @@ export default class Environment{
             }
             env = env.previus;
         }
-        tree.addError("Variable " + id + " no existe en el ambiente " + this.id);
+        tree.addError("Variable " + id + " no existe en el ambiente " + this.id, node.location.start.line, node.location.start.column);
         return undefined;
     }
 
@@ -36,7 +36,7 @@ export default class Environment{
             }
             env = env.previus;
         }
-        tree.addError("Variable " + id + " no existe en el ambiente " + this.id);
+        tree.addError("Variable " + id + " no existe en el ambiente " + this.id, node.location.start.line, node.location.start.column);
         return undefined;
     }
 
@@ -51,7 +51,7 @@ export default class Environment{
             }
             env = env.previus;
         }
-        tree.addError("Variable " + id + " no existe en el ambiente " + this.id);
+        tree.addError("Variable " + id + " no existe en el ambiente " + this.id, node.location.start.line, node.location.start.column);
     }
 
 };

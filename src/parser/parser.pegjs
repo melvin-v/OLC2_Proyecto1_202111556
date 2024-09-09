@@ -68,9 +68,10 @@ Unaria = "-" _ num:Numero { return new UnaryOperation(num, "-", location()) }
 // { return{ tipo: "numero", valor: parseFloat(text(), 10) } }
 Numero = [0-9]+( "." [0-9]+ )? {return new Number(parseFloat(text(), 10), location())}
   / "(" _ exp:Expresion _ ")" { return new Agrupation(exp, location()) }
-  / "true" { return new Boolean(true, location()) }
-  / "false" { return new Boolean(false, location()) }
+  / "true" { return new Bool(true, location()) }
+  / "false" { return new Bool(false, location()) }
   / "\""  txt:StringTxt "\"" { return new String(txt, location()) }
+  / "\'"  txt:StringTxt "\'" { return new String(txt, location()) }
   / id:Identificador { return new ReferenceVariable(id, location()) }
 
 StringTxt = [^"]* { return text() }
