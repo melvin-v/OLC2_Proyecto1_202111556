@@ -29,6 +29,8 @@ Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
 Expresion = Asignacion
 
 Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return new Assignment(id, asgn, location()) }
+          / id:Identificador _ "+" _ "=" _ asgn:Asignacion { return new Assignment(id, new BinaryOperation(new ReferenceVariable(id, location()), asgn, "+", location()), location()) } 
+          / id:Identificador _ "-" _ "=" _ asgn:Asignacion { return new Assignment(id, new BinaryOperation(new ReferenceVariable(id, location()), asgn, "-", location()), location()) }
           / Comparacion
 
 Comparacion = izq:Suma expansion:(
