@@ -107,8 +107,8 @@ export default class Interpreter extends Visitor {
             else if (typeof valorVariable === "string" && valorVariable.length === 1) {
                 this.environment.saveVariable(nombreVariable, Types.CHAR, valorVariable, this);
             }
-            else if (typeof valorVariable === "bool") {
-                this.environment.saveVariable(nombreVariable, Types.BOOL, valorVariable, this);
+            else if (typeof valorVariable === "boolean") {
+                this.environment.saveVariable(nombreVariable, Types.BOOLEAN, valorVariable, this);
             }
         }
         else{
@@ -128,15 +128,15 @@ export default class Interpreter extends Visitor {
                 this.addError("Error de tipo, se esperaba un char", node.location.start.line, node.location.start.column);
                 return;
             }
-            else if(typeof valorVariable === "bool" && !(tipo === Types.BOOL)){
-                this.addError("Error de tipo, se esperaba un bool", node.location.start.line, node.location.start.column);
+            else if(typeof valorVariable === "boolean" && !(tipo === Types.BOOLEAN)){
+                this.addError("Error de tipo, se esperaba un boolean", node.location.start.line, node.location.start.column);
                 return;
         }
 
         this.environment.saveVariable(nombreVariable, tipo, valorVariable, this);
     }
 }
-    visitBool(node) {
+    visitBoolean(node) {
         if (node.value == true) {
             return true;
         }
@@ -178,7 +178,7 @@ export default class Interpreter extends Visitor {
         else if(variable.type === Types.CHAR && typeof valor === "string" && valor.length === 1){
             this.environment.updateVariable(node.id, valor, this);
         }
-        else if(variable.type === Types.BOOL && typeof valor === "boolean"){
+        else if(variable.type === Types.BOOLEAN && typeof valor === "boolean"){
             this.environment.updateVariable(node.id, valor, this);
         }
         else{
@@ -206,6 +206,14 @@ export default class Interpreter extends Visitor {
             node.stmtFalse.accept(this);
         }
 
+    }
+
+    visitTernaryOperation(node) {
+        const cond = node.condition.accept(this);
+        if (cond) {
+            return node.trueExpr.accept(this);
+        }
+        return node.falseExpr.accept(this);
     }
 
     visitWhile(node) {

@@ -14,8 +14,9 @@ module.exports = {
         'If': '../instructions/If.js',
         'Block': '../instructions/Block.js',
         'While': '../instructions/While.js',
-        'Bool': '../expressions/Bool.js',
+        'Boolean': '../expressions/Boolean.js',
         'String': '../expressions/String.js',
         'Types': '../tools/Types.js',
+        'TernaryOperation': '../instructions/TernaryOperation.js',
     }
 };

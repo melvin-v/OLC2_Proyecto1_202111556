@@ -1,6 +1,6 @@
 import Expression from '../abstract/Expression.js';
 
-export default class Bool extends Expression {
+export default class Boolean extends Expression {
     constructor(value, location) {
         super();
         this.value = value;
@@ -8,6 +8,6 @@ export default class Bool extends Expression {
     }
 
     accept(visitor) {
-        return visitor.visitBool(this);
+        return visitor.visitBoolean(this);
     }
 }

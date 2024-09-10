@@ -3,7 +3,7 @@ export default class Types {
     static FLOAT = "FLOAT";
     static STRING = "STRING";
     static CHAR = "CHAR";
-    static BOOL = "BOOL";
+    static BOOLEAN = "BOOLEAN";
     static ARRAY = "ARRAY";
     static STRUCT = "STRUCT";
     static NULL = "NULL";

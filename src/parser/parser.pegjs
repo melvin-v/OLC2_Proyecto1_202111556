@@ -7,12 +7,12 @@ VarDcl = "var" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return new Decla
        /  "int" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.INT, location()) }
         /  "float" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.FLOAT, location()) }
         /  "char" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.CHAR, location()) }
-        /  "bool" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.BOOL, location()) }
+        /  "boolean" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.BOOLEAN, location()) }
         /  "string" _ id:Identificador _  "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, Types.STRING, location()) }
         /  "int" _ id:Identificador _ ";" { return new Declaration(id, null, Types.INT, location()) }
         /  "float" _ id:Identificador _ ";" { return new Declaration(id, null, Types.FLOAT, location()) }
         /  "char" _ id:Identificador _ ";" { return new Declaration(id, null, Types.CHAR, location()) }
-        /  "bool" _ id:Identificador _ ";" { return new Declaration(id, null, Types.BOOL, location()) }
+        /  "boolean" _ id:Identificador _ ";" { return new Declaration(id, null, Types.BOOLEAN, location()) }
         /  "string" _ id:Identificador _";" { return new Declaration(id, null, Types.STRING, location()) }
 
 Stmt = "System.out.println" _ "(" _ exp:Expresion _ ")" _ ";" { return new Print(exp, location()) }
@@ -24,13 +24,14 @@ Stmt = "System.out.println" _ "(" _ exp:Expresion _ ")" _ ";" { return new Print
       )? { return new If(cond, stmtTrue, stmtFalse) }
     / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return new While(cond, stmt, location()) }
 
-Identificador = [a-zA-Z][a-zA-Z0-9]* { return text() }
+Identificador = [a-zA-Z_][a-zA-Z0-9_]* { return text(); }
 
 Expresion = Asignacion
 
 Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return new Assignment(id, asgn, location()) }
           / id:Identificador _ "+" _ "=" _ asgn:Asignacion { return new Assignment(id, new BinaryOperation(new ReferenceVariable(id, location()), asgn, "+", location()), location()) } 
           / id:Identificador _ "-" _ "=" _ asgn:Asignacion { return new Assignment(id, new BinaryOperation(new ReferenceVariable(id, location()), asgn, "-", location()), location()) }
+          / exp1:AndOr _ "?" _ exp2:AndOr _ ":" _ exp3:AndOr { return new TernaryOperation(exp1, exp2, exp3, location()) }
           / AndOr
 
 AndOr = izq:Comparacion expansion:(
@@ -124,8 +125,9 @@ Unaria = "-" _ num:Numero { return new UnaryOperation(num, "-", location()) }
 // { return{ tipo: "numero", valor: parseFloat(text(), 10) } }
 Numero = [0-9]+( "." [0-9]+ )? {return new Number(parseFloat(text(), 10), location())}
   / "(" _ exp:Expresion _ ")" { return new Agrupation(exp, location()) }
-  / "true" { return new Bool(true, location()) }
-  / "false" { return new Bool(false, location()) }
+  / "[" _ exp:Expresion _ "]" { return new Agrupation(exp, location()) }
+  / "true" { return new Boolean(true, location()) }
+  / "false" { return new Boolean(false, location()) }
   / "\""  txt:StringTxt "\"" { return new String(txt, location()) }
   / "\'"  txt:StringTxt "\'" { return new String(txt, location()) }
   / id:Identificador { return new ReferenceVariable(id, location()) }
