@@ -31,15 +31,31 @@ export default class Interpreter extends Visitor {
         }
         switch (node.op) {
             case '+':
+                if ( (typeof izq === "number" && !Number.isInteger(izq)) || (typeof der === "number" && !Number.isInteger(der))) {
+                    const numero = izq + der;
+                    return numero.toFixed(9);
+                }
                 return izq + der;
             case '-':
+                if ((typeof izq === "number" && !Number.isInteger(izq)) || (typeof der === "number" && !Number.isInteger(der))) {
+                    const numero = izq - der;
+                    return numero.toFixed(9);
+                }
                 return izq - der;
             case '*':
+                if ((typeof izq === "number" && !Number.isInteger(izq)) || (typeof der === "number" && !Number.isInteger(der))) {
+                    const numero = izq * der;
+                    return numero.toFixed(9);
+                }
                 return izq * der;
             case '/':
                 if (der === 0) {
                     this.addError("Error de division por cero", node.location.start.line, node.location.start.column);
                     return;
+                }
+                if ((typeof izq === "number" && !Number.isInteger(izq)) || (typeof der === "number" && !Number.isInteger(der))) {
+                    const numero = izq / der;
+                    return numero.toFixed(9);
                 }
                 return izq / der;
             case '%':
@@ -87,53 +103,62 @@ export default class Interpreter extends Visitor {
     }
 
     visitDeclaration(node) {
+        console.log("Declaracion de variable");
         const nombreVariable = node.id;
         const tipo = node.tipo;
+        
         if(node.exp === null){
-            this.environment.saveVariable(nombreVariable, tipo, null, this);
+            this.environment.saveVariable(nombreVariable, tipo, null, this, node);
             return null;
         }
         const valorVariable = node.exp.accept(this);
         if(tipo === undefined){
             if (typeof valorVariable === "number" && Number.isInteger(valorVariable)) {
-                this.environment.saveVariable(nombreVariable, Types.INT, valorVariable, this);
+                this.environment.saveVariable(nombreVariable, Types.INT, valorVariable, this, node);
             }
             else if (typeof valorVariable === "number" && !Number.isInteger(valorVariable)) {
-                this.environment.saveVariable(nombreVariable, Types.FLOAT, valorVariable, this);
+                this.environment.saveVariable(nombreVariable, Types.FLOAT, valorVariable, this, node);
             }
             else if (typeof valorVariable === "string") {
-                this.environment.saveVariable(nombreVariable, Types.STRING, valorVariable, this);
+                this.environment.saveVariable(nombreVariable, Types.STRING, valorVariable, this, node);
             }
             else if (typeof valorVariable === "string" && valorVariable.length === 1) {
-                this.environment.saveVariable(nombreVariable, Types.CHAR, valorVariable, this);
+                console.log(typeof valorVariable);
+                this.environment.saveVariable(nombreVariable, Types.CHAR, valorVariable, this, node);
             }
             else if (typeof valorVariable === "boolean") {
-                this.environment.saveVariable(nombreVariable, Types.BOOLEAN, valorVariable, this);
+                this.environment.saveVariable(nombreVariable, Types.BOOLEAN, valorVariable, this, node);
             }
         }
         else{
             if(typeof valorVariable === "number" && Number.isInteger(valorVariable && !(tipo === Types.INT))){
                 this.addError("Error de tipo, se esperaba un entero", node.location.start.line, node.location.start.column);
+                this.environment.saveVariable(nombreVariable, tipo, null, this, node);
                 return;
             }
-            else if(typeof valorVariable === "number" && !(Number.isInteger(valorVariable) && !(tipo === Types.FLOAT))){
+            else if(typeof valorVariable === "number" && !(Number.isInteger(valorVariable)) && !(tipo === Types.FLOAT)){
+                console.log(node);
                 this.addError("Error de tipo, se esperaba un flotante", node.location.start.line, node.location.start.column);
+                this.environment.saveVariable(nombreVariable, tipo, null, this, node);
                 return;
             }
-            else if(typeof valorVariable === "string" && !(tipo === Types.STRING)){
+            else if(typeof valorVariable === "string" && !(tipo === Types.STRING) && !(tipo === Types.CHAR)){
                 this.addError("Error de tipo, se esperaba un string", node.location.start.line, node.location.start.column);
+                this.environment.saveVariable(nombreVariable, tipo, null, this, node);
                 return;
             }
-            else if(typeof valorVariable === "string" && valorVariable.length === 1 && !(tipo === Types.CHAR)){
+            else if(typeof valorVariable === "string" && valorVariable.length === 1 && !(tipo === Types.CHAR && !(tipo === Types.STRING))){
                 this.addError("Error de tipo, se esperaba un char", node.location.start.line, node.location.start.column);
+                this.environment.saveVariable(nombreVariable, tipo, null, this, node);
                 return;
             }
             else if(typeof valorVariable === "boolean" && !(tipo === Types.BOOLEAN)){
                 this.addError("Error de tipo, se esperaba un boolean", node.location.start.line, node.location.start.column);
+                this.environment.saveVariable(nombreVariable, tipo, null, this, node);
                 return;
         }
 
-        this.environment.saveVariable(nombreVariable, tipo, valorVariable, this);
+        this.environment.saveVariable(nombreVariable, tipo, valorVariable, this, node);
     }
 }
     visitBoolean(node) {
@@ -148,13 +173,15 @@ export default class Interpreter extends Visitor {
 
     visitReferenceVariable(node) {
         const nombreVariable = node.id;
-        return this.environment.getVariable(nombreVariable, this);
+        return this.environment.getVariable(nombreVariable, this, node);
     }
 
 
     visitPrint(node) {
-        const valor = node.exp.accept(this);
-        this.setConsole(valor);
+        for (const exp of node.exp) {
+            const valor = exp.accept(this);
+            this.setConsole(valor);
+        }
     }
 
 
@@ -167,21 +194,22 @@ export default class Interpreter extends Visitor {
         const variable = this.environment.getAllVariable(node.id, this);
         const valor = node.exp.accept(this);
         if(variable.type === Types.INT && typeof valor === "number" && Number.isInteger(valor)){
-            this.environment.updateVariable(node.id, valor, this);
+            this.environment.updateVariable(node.id, valor, this, node);
         }
         else if(variable.type === Types.FLOAT && typeof valor === "number" && !Number.isInteger(valor)){
-            this.environment.updateVariable(node.id, valor, this);
+            this.environment.updateVariable(node.id, valor, this, node);
         }
         else if(variable.type === Types.STRING && typeof valor === "string"){
-            this.environment.updateVariable(node.id, valor, this);
+            this.environment.updateVariable(node.id, valor, this, node);
         }
         else if(variable.type === Types.CHAR && typeof valor === "string" && valor.length === 1){
-            this.environment.updateVariable(node.id, valor, this);
+            this.environment.updateVariable(node.id, valor, this, node);
         }
         else if(variable.type === Types.BOOLEAN && typeof valor === "boolean"){
-            this.environment.updateVariable(node.id, valor, this);
+            this.environment.updateVariable(node.id, valor, this, node);
         }
         else{
+            this.environment.updateVariable(node.id, null, this, node);
             this.addError("Error de tipo, se esperaba un " + variable.type, node.location.start.line, node.location.start.column);
         }
 
@@ -201,11 +229,37 @@ export default class Interpreter extends Visitor {
             node.stmtTrue.accept(this);
             return;
         }
-
         if (node.stmtFalse) {
             node.stmtFalse.accept(this);
         }
 
+    }
+
+    visitCase(node) {
+        const casesArray = node.cases;
+        for (const caso of casesArray) {
+            if (caso.expr.accept(this) === node.expr.accept(this)) {
+                caso.cases.accept(this);
+                return;
+            }
+        } 
+    }
+
+    visitSwitch(node) {
+        console.log("Switch node");
+        const expr = node.expr.accept(this);
+        for (const caso of node.cases) {
+            if (caso.expr.accept(this) === expr) {
+                caso.cases.accept(this);
+                return;
+            }
+        }
+        console.log("Default action");
+        console.log(node.defaultAction);
+        if (node.defaultAction) {
+            node.defaultAction.accept(this);
+        }
+        
     }
 
     visitTernaryOperation(node) {

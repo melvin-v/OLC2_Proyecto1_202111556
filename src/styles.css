@@ -80,5 +80,8 @@ body, html {
     color: #fff;
     border: 1px solid #ccc;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    min-height: 100px;
+    min-height: 200px;
+    max-height: 200px; /* Limita la altura máxima */
+    overflow-y: auto; /* Agrega una barra de desplazamiento vertical */
 }
+

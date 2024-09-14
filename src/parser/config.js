@@ -18,5 +18,7 @@ module.exports = {
         'String': '../expressions/String.js',
         'Types': '../tools/Types.js',
         'TernaryOperation': '../instructions/TernaryOperation.js',
+        'Switch': '../instructions/Switch.js',
+        'Case': '../instructions/Case.js',
     }
 };

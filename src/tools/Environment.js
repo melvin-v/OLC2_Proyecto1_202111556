@@ -4,7 +4,7 @@ export default class Environment{
         this.tabla = new Map();
     }
 
-    saveVariable(id,  type, value, tree){
+    saveVariable(id,  type, value, tree, node){
         let env = this;
         while(env != undefined){
             if(env.tabla.has(id)){
@@ -16,7 +16,7 @@ export default class Environment{
         this.tabla.set(id, {type, value});
     }
 
-    getVariable(id, tree){
+    getVariable(id, tree, node){
         let env = this;
         while(env != undefined){
             if(env.tabla.has(id)){
@@ -28,7 +28,7 @@ export default class Environment{
         return undefined;
     }
 
-    getAllVariable(id, tree){
+    getAllVariable(id, tree, node){
         let env = this;
         while(env != undefined){
             if(env.tabla.has(id)){
@@ -40,7 +40,7 @@ export default class Environment{
         return undefined;
     }
 
-    updateVariable(id, value, tree){
+    updateVariable(id, value, tree, node){
         let env = this;
         while(env != undefined){
             if(env.tabla.has(id)){
