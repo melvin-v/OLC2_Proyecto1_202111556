@@ -226,7 +226,7 @@ export default class Interpreter extends Visitor {
     visitBlock(node) {
         const entornoAnterior = this.environment;
         this.environment = new Environment(entornoAnterior);
-        node.statements.forEach(statement => {
+        node.statements.forEach(statement => { 
             if (statement instanceof Continue){
                 return;
             }
@@ -265,10 +265,20 @@ export default class Interpreter extends Visitor {
     visitSwitch(node) {
         console.log("Switch node");
         const expr = node.expr.accept(this);
+        let flag = false;
         for (const caso of node.cases) {
             if (caso.expr.accept(this) === expr) {
-                caso.cases.accept(this);
-                return;
+                flag = true;
+            }
+            if(flag){
+                if(caso.cases.length > 0){
+                    for(const stmt of caso.cases){
+                        stmt.accept(this);
+                    }
+                }
+                if(caso.stmtBreak.length > 0){
+                    return;
+                }
             }
         }
         console.log("Default action");
@@ -288,6 +298,7 @@ export default class Interpreter extends Visitor {
     }
 
     visitWhile(node) {
+        
         while (node.condition.accept(this)) {
             if(this.Break){
                 this.Break = false;
@@ -301,6 +312,10 @@ export default class Interpreter extends Visitor {
         const id = node.init.id;
         node.init.accept(this);
         while (node.condition.accept(this)) {
+            if(this.Break){
+                this.Break = false;
+                break;
+            }
             node.block.accept(this);
             if (node.increment == '++') {
                 const valor = this.environment.getVariable(id, this);

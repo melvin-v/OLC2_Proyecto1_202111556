@@ -27,21 +27,23 @@ ClassBody = dcl:VarDcl _ { return dcl }
 Parametros = id:Identificador _ params:("," _ ids:Identificador { return ids })* { return [id, ...params] }
 
 Stmt = "System.out.println" _ "(" _ exp:VariasExpresiones _ ")" _ ";" { return new Print(exp, location()) }
+    / "switch" _ "(" _ exp:Expresion _ ")" _ "{" _ cases:(_ "case" _ exp1:Expresion _ ":" _ stmt:(Stmt)* _ breakForSwitch:("break" _ ";" {return new Break(location())})* { return new Case(exp1, stmt, breakForSwitch, location()) })+
+      stmt:( _ "default" _ ":" _ stmt:Stmt{return stmt})? _ "}" { return new Switch(exp, cases, stmt, location()) }
     / Bloque:Bloque { return Bloque }
     / "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Stmt 
       stmtFalse:(
         _ "else" _ stmtFalse:Stmt { return stmtFalse } 
       )? { return new If(cond, stmtTrue, stmtFalse) }
-    / "switch" _ "(" _ exp:Expresion _ ")" _ "{" _ cases:(_ "case" _ exp1:Expresion _ ":" _ stmt:Stmt _ "break" _ ";"{ return new Case(exp1, stmt, location()) })+
-      stmt:( _ "default" _ ":" _ stmt:Stmt{return stmt})? _ "}" { return new Switch(exp, cases, stmt, location()) }
+    
     / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return new While(cond, stmt, location()) }
         / "for" _ "(" _ init:ForInit _ cond:Expresion _ ";" _ inc:Incremento _ ")" _ stmt:Stmt {
       return new For(init, cond, inc, stmt, location())
     }
-    / "break" _ ";" { return crearNodo('break') }
-    / "continue" _ ";" { return crearNodo('continue') }
+    / "break" _ ";" { return new Break(location()) }
+    / "continue" _ ";" { return new Continue(location()) }
     / "return" _ exp:Expresion? _ ";" { return crearNodo('return', { exp }) }
     / exp:Expresion _ ";" { return new ExpressionStatement(exp, location()) }
+
 
 Bloque = "{" _ dcls:Declaracion* _ "}" { return new Block(dcls, location()) }
 

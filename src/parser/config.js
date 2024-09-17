@@ -21,5 +21,7 @@ module.exports = {
         'Switch': '../instructions/Switch.js',
         'Case': '../instructions/Case.js',
         'For': '../instructions/For.js',
+        'Break': '../instructions/Break.js',
+        'Continue': '../instructions/Continue.js',
     }
 };
