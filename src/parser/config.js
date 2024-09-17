@@ -23,5 +23,8 @@ module.exports = {
         'For': '../instructions/For.js',
         'Break': '../instructions/Break.js',
         'Continue': '../instructions/Continue.js',
+        'FunctionDcl': '../instructions/FunctionDcl.js',
+        'ReturnDcl': '../expressions/ReturnDcl.js',
+        'CallDcl': '../expressions/CallDcl.js',
     }
 };

@@ -17,7 +17,7 @@ VarDcl = "var" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return new Decla
         /  "boolean" _ id:Identificador _ ";" { return new Declaration(id, null, Types.BOOLEAN, location()) }
         /  "string" _ id:Identificador _";" { return new Declaration(id, null, Types.STRING, location()) }
 
-FuncDcl = "function" _ id:Identificador _ "(" _ params:Parametros? _ ")" _ bloque:Bloque { return crearNodo('dclFunc', { id, params: params || [], bloque }) }
+FuncDcl = "function" _ id:Identificador _ "(" _ params:Parametros? _ ")" _ bloque:Bloque { return new FunctionDcl(id,  params: params || [], bloque, location()) }
 
 ClassDcl = "class" _ id:Identificador _ "{" _ dcls:ClassBody* _ "}" { return crearNodo('dclClase', { id, dcls }) }
 
@@ -41,7 +41,7 @@ Stmt = "System.out.println" _ "(" _ exp:VariasExpresiones _ ")" _ ";" { return n
     }
     / "break" _ ";" { return new Break(location()) }
     / "continue" _ ";" { return new Continue(location()) }
-    / "return" _ exp:Expresion? _ ";" { return crearNodo('return', { exp }) }
+    / "return" _ exp:Expresion? _ ";" { return new ReturnDcl(exp, location()) }
     / exp:Expresion _ ";" { return new ExpressionStatement(exp, location()) }
 
 
@@ -170,7 +170,7 @@ Unaria = "-" _ num:Numero { return new UnaryOperation(num, "-", location()) }
       const { tipo, id, args:argumentos } = args
 
       if (tipo === 'funcCall') {
-        return crearNodo('llamada', { callee: objetivo, args: argumentos || [] })
+        return new CallDcl(objetivo, argumentos || [], location())
       }else if (tipo === 'get') {
         return crearNodo('get', { objetivo, propiedad: id })
       }
