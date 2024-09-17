@@ -1,6 +1,8 @@
 programa = _ dcl:Declaracion* _ { return dcl }
 
-Declaracion = dcl:VarDcl _ { return dcl }
+Declaracion = dcl:ClassDcl _ { return dcl }
+            / dcl:VarDcl _ { return dcl }
+            / dcl:FuncDcl _ { return dcl }
             / stmt:Stmt _ { return stmt }
 
 VarDcl = "var" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return new Declaration(id, exp, undefined, location()) }
@@ -15,9 +17,17 @@ VarDcl = "var" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return new Decla
         /  "boolean" _ id:Identificador _ ";" { return new Declaration(id, null, Types.BOOLEAN, location()) }
         /  "string" _ id:Identificador _";" { return new Declaration(id, null, Types.STRING, location()) }
 
+FuncDcl = "function" _ id:Identificador _ "(" _ params:Parametros? _ ")" _ bloque:Bloque { return crearNodo('dclFunc', { id, params: params || [], bloque }) }
+
+ClassDcl = "class" _ id:Identificador _ "{" _ dcls:ClassBody* _ "}" { return crearNodo('dclClase', { id, dcls }) }
+
+ClassBody = dcl:VarDcl _ { return dcl }
+          / dcl:FuncDcl _ { return dcl }
+
+Parametros = id:Identificador _ params:("," _ ids:Identificador { return ids })* { return [id, ...params] }
+
 Stmt = "System.out.println" _ "(" _ exp:VariasExpresiones _ ")" _ ";" { return new Print(exp, location()) }
-    / exp:Expresion _ ";" { return new ExpressionStatement(exp, location()) }
-    / "{" _ dcls:Declaracion* _ "}" { return new Block(dcls, location()) }
+    / Bloque:Bloque { return Bloque }
     / "if" _ "(" _ cond:Expresion _ ")" _ stmtTrue:Stmt 
       stmtFalse:(
         _ "else" _ stmtFalse:Stmt { return stmtFalse } 
@@ -25,10 +35,26 @@ Stmt = "System.out.println" _ "(" _ exp:VariasExpresiones _ ")" _ ";" { return n
     / "switch" _ "(" _ exp:Expresion _ ")" _ "{" _ cases:(_ "case" _ exp1:Expresion _ ":" _ stmt:Stmt _ "break" _ ";"{ return new Case(exp1, stmt, location()) })+
       stmt:( _ "default" _ ":" _ stmt:Stmt{return stmt})? _ "}" { return new Switch(exp, cases, stmt, location()) }
     / "while" _ "(" _ cond:Expresion _ ")" _ stmt:Stmt { return new While(cond, stmt, location()) }
+        / "for" _ "(" _ init:ForInit _ cond:Expresion _ ";" _ inc:Incremento _ ")" _ stmt:Stmt {
+      return new For(init, cond, inc, stmt, location())
+    }
+    / "break" _ ";" { return crearNodo('break') }
+    / "continue" _ ";" { return crearNodo('continue') }
+    / "return" _ exp:Expresion? _ ";" { return crearNodo('return', { exp }) }
+    / exp:Expresion _ ";" { return new ExpressionStatement(exp, location()) }
+
+Bloque = "{" _ dcls:Declaracion* _ "}" { return new Block(dcls, location()) }
+
+Incremento = id:Identificador _ signo:"++" { return signo }
+           / id:Identificador _ signo:"--" { return signo }
+           / id:Identificador _ "=" _ exp:Expresion { return new Assignment(id, exp, location()) }
+
+ForInit = dcl:VarDcl { return dcl }
+        / exp:Expresion _ ";" { return exp }
+        / ";" { return null }
 
 VariasExpresiones
   = head:Expresion tail:(_ "," _ Expresion)* {
-      console.log(head, tail);
       return [head, ...tail.map(([_, __,___, exp]) => exp)];
   }
 
@@ -129,6 +155,33 @@ Modulo = izq:Unaria expansion:(
 Unaria = "-" _ num:Numero { return new UnaryOperation(num, "-", location()) }
   / "!" _ num:Numero { return new UnaryOperation(num, "!", location()) }
   / Numero
+  / Llamada
+
+  Llamada = objetivoInicial:Numero operaciones:(
+    ("(" _ args:Argumentos? _ ")" { return {args, tipo: 'funcCall' } })
+    / ("." _ id:Identificador _ { return { id, tipo: 'get' } })
+  )* 
+  {
+  const op =  operaciones.reduce(
+    (objetivo, args) => {
+      // return crearNodo('llamada', { callee, args: args || [] })
+      const { tipo, id, args:argumentos } = args
+
+      if (tipo === 'funcCall') {
+        return crearNodo('llamada', { callee: objetivo, args: argumentos || [] })
+      }else if (tipo === 'get') {
+        return crearNodo('get', { objetivo, propiedad: id })
+      }
+    },
+    objetivoInicial
+  )
+
+  console.log('llamada', {op}, {text: text()});
+
+return op
+}
+
+Argumentos = arg:Expresion _ args:("," _ exp:Expresion { return exp })* { return [arg, ...args] }
 
 Numero = "(" _ exp:AndOr _ ")" { return new Agrupation(exp, location()) } 
   / "[" _ exp:Expresion _ "]" { return new Agrupation(exp, location()) }

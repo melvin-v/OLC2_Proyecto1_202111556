@@ -1,6 +1,8 @@
 import Environment from '../tools/Environment.js';
 import Visitor from '../abstract/Visitor.js';
 import Types from '../tools/Types.js'
+import Break from '../instructions/Break.js'
+import Continue from '../instructions/Continue.js'
 
 export default class Interpreter extends Visitor {
     constructor() {
@@ -8,6 +10,7 @@ export default class Interpreter extends Visitor {
         this.environment = new Environment();
         this.console = "";
         this.errors = [];
+        this.Break = false;
     }
 
     setConsole(text){
@@ -103,7 +106,6 @@ export default class Interpreter extends Visitor {
     }
 
     visitDeclaration(node) {
-        console.log("Declaracion de variable");
         const nombreVariable = node.id;
         const tipo = node.tipo;
         
@@ -131,6 +133,11 @@ export default class Interpreter extends Visitor {
             }
         }
         else{
+            if(valorVariable === 0){
+                this.environment.saveVariable(nombreVariable, tipo, valorVariable, this, node);
+                return;
+            }
+            
             if(typeof valorVariable === "number" && Number.isInteger(valorVariable && !(tipo === Types.INT))){
                 this.addError("Error de tipo, se esperaba un entero", node.location.start.line, node.location.start.column);
                 this.environment.saveVariable(nombreVariable, tipo, null, this, node);
@@ -218,8 +225,18 @@ export default class Interpreter extends Visitor {
 
     visitBlock(node) {
         const entornoAnterior = this.environment;
-        this.entornoActual = new Environment(entornoAnterior);
-        node.statements.forEach(statement => statement.accept(this));
+        this.environment = new Environment(entornoAnterior);
+        node.statements.forEach(statement => {
+            if (statement instanceof Continue){
+                return;
+            }
+            if (statement instanceof Break){
+                this.Break = true;
+                return;
+            }
+            statement.accept(this);
+        
+        });
         this.environment = entornoAnterior;
     }
 
@@ -272,8 +289,48 @@ export default class Interpreter extends Visitor {
 
     visitWhile(node) {
         while (node.condition.accept(this)) {
+            if(this.Break){
+                this.Break = false;
+                break;
+            }
             node.block.accept(this);
         }
     }
+
+    visitFor(node) {
+        const id = node.init.id;
+        node.init.accept(this);
+        while (node.condition.accept(this)) {
+            node.block.accept(this);
+            if (node.increment == '++') {
+                const valor = this.environment.getVariable(id, this);
+                this.environment.updateVariable(id, valor + 1, this);
+            } else if (node.increment == '--') {
+                const valor = this.environment.getVariable(id, this);
+                this.environment.updateVariable(id, valor - 1, this);
+            }
+            else {
+                node.increment.accept(this);
+            }
+    }
+    this.environment.deleteVariable(id, this);
+}
+
+    visitBreak(node) {
+        return node;
+    }
+
+    visitContinue(node) {
+        return node;
+    }
+
+    visitReturn(node) {
+        if (node.exp) {
+            return node.exp.accept(this);
+        }
+        return null;
+    }
+
+
 
 };

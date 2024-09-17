@@ -20,5 +20,6 @@ module.exports = {
         'TernaryOperation': '../instructions/TernaryOperation.js',
         'Switch': '../instructions/Switch.js',
         'Case': '../instructions/Case.js',
+        'For': '../instructions/For.js',
     }
 };
