@@ -346,6 +346,55 @@ export default class Interpreter extends Visitor {
         return null;
     }
 
+    visitparseIntDcl(node) {
+        const valor = node.value.accept(this);
+        if (typeof valor.value === "string") {
+            return parseInt(valor.value);
+        }
+        this.addError("Error de tipo, se esperaba un string", node.location.start.line, node.location.start.column);
+    }
 
+    visitparseFloatDcl(node) {
+        const valor = node.value.accept(this);
+        if (typeof valor.value === "string") {
+            return parseFloat(valor.value);
+        }
+        this.addError("Error de tipo, se esperaba un string", node.location.start.line, node.location.start.column);
+    }
+
+    visittoStringDcl(node) {
+        const valor = node.value.accept(this);
+        return valor.toString();
+    }
+
+    visittoLowerCaseDcl(node) {
+        const valor = node.value.accept(this);
+        return valor.toLowerCase();
+    }
+
+    visittoUpperCaseDcl(node) {
+        const valor = node.value.accept(this);
+        return valor.toUpperCase();
+    }
+
+    visittypeOfDcl(node) {
+        const valorVariable = node.exp.accept(this);
+        if (typeof valorVariable === "number" && Number.isInteger(valorVariable)) {
+            return "int";
+        }
+        else if (typeof valorVariable === "number" && !Number.isInteger(valorVariable)) {
+            return "float";
+        }
+        else if (typeof valorVariable === "string") {
+            return "string";
+        }
+        else if (typeof valorVariable === "string" && valorVariable.length === 1) {
+            console.log(typeof valorVariable);
+            return "char";
+        }
+        else if (typeof valorVariable === "boolean") {
+            return "boolean";
+        }
+    }
 
 };

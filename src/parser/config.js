@@ -26,5 +26,11 @@ module.exports = {
         'FunctionDcl': '../instructions/FunctionDcl.js',
         'ReturnDcl': '../expressions/ReturnDcl.js',
         'CallDcl': '../expressions/CallDcl.js',
+        'ParseFloatDcl': '../instructions/ParseFloatDcl.js',
+        'ParseIntDcl': '../instructions/ParseIntDcl.js',
+        'ToLowerCaseDcl': '../instructions/ToLowerCaseDcl.js',
+        'ToUpperCaseDcl': '../instructions/ToUpperCaseDcl.js',
+        'ToStringDcl': '../instructions/ToStringDcl.js',
+        'TypeOfDcl': '../instructions/TypeOfDcl.js',
     }
 };

@@ -17,7 +17,8 @@ VarDcl = "var" _ id:Identificador _ "=" _ exp:Expresion _ ";" { return new Decla
         /  "boolean" _ id:Identificador _ ";" { return new Declaration(id, null, Types.BOOLEAN, location()) }
         /  "string" _ id:Identificador _";" { return new Declaration(id, null, Types.STRING, location()) }
 
-FuncDcl = "function" _ id:Identificador _ "(" _ params:Parametros? _ ")" _ bloque:Bloque { return new FunctionDcl(id,  params: params || [], bloque, location()) }
+FuncDcl = "void" _ id:Identificador _ "(" _ params:Parametros? _ ")" _ bloque:Bloque { return new FunctionDcl(id, params || [], bloque, location()) }
+        
 
 ClassDcl = "class" _ id:Identificador _ "{" _ dcls:ClassBody* _ "}" { return crearNodo('dclClase', { id, dcls }) }
 
@@ -68,6 +69,12 @@ Asignacion = id:Identificador _ "=" _ asgn:Asignacion { return new Assignment(id
           / id:Identificador _ "+" _ "=" _ asgn:Asignacion { return new Assignment(id, new BinaryOperation(new ReferenceVariable(id, location()), asgn, "+", location()), location()) } 
           / id:Identificador _ "-" _ "=" _ asgn:Asignacion { return new Assignment(id, new BinaryOperation(new ReferenceVariable(id, location()), asgn, "-", location()), location()) }
           / exp1:AndOr _ "?" _ exp2:AndOr _ ":" _ exp3:AndOr { return new TernaryOperation(exp1, exp2, exp3, location()) }
+          / "parseInt" _ "(" _ exp:Expresion _ ")" { return new ParseIntDcl(exp, location()) }
+        / "parseFloat" _ "(" _ exp:Expresion _ ")" { return new ParseFloatDcl(exp, location()) }
+        / "toString" _ "(" _ exp:Expresion _ ")" { return new ToStringDcl(exp, location()) }
+        / "toLowerCase" _ "(" _ exp:Expresion _ ")"  { return new ToLowerCaseDcl(exp, location()) }
+        / "toUpperCase" _ "(" _ exp:Expresion _ ")"  { return new ToUpperCaseDcl(exp, location()) }
+        / "typeof" _ "(" _ exp:Expresion _ ")"  { return new TypeOfDcl(exp, location()) }
           / AndOr
 
 AndOr = izq:Comparacion expansion:(

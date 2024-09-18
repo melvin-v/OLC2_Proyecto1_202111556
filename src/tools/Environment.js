@@ -9,7 +9,7 @@ export default class Environment{
                 tree.addError("Variable " + id + " ya existe en el ambiente " + this.id, node.location.start.line, node.location.start.column);
                 return;
             }
-        this.tabla.set(id, {type, value});
+        this.tabla.set(id, {type, value, linea: node.location.start.line, columna: node.location.start.column});
     }
 
     getVariable(id, tree, node){
