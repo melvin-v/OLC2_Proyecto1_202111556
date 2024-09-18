@@ -1,8 +1,8 @@
-import Environment from '../tools/Environment.js';
-import Visitor from '../abstract/Visitor.js';
-import Types from '../tools/Types.js'
-import Break from '../instructions/Break.js'
-import Continue from '../instructions/Continue.js'
+import Environment from './tools/Environment.js';
+import Visitor from './abstract/Visitor.js';
+import Types from './tools/Types.js'
+import Break from './instructions/Break.js'
+import Continue from './instructions/Continue.js'
 
 export default class Interpreter extends Visitor {
     constructor() {
